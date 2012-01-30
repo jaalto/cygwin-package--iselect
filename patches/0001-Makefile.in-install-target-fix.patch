@@ -1,0 +1,36 @@
+From fb917dc4262601bc66f42955d92e3ec2c022aa06 Mon Sep 17 00:00:00 2001
+From: Jari Aalto <jari.aalto@cante.net>
+Date: Fri, 14 Mar 2008 10:08:40 +0200
+Subject: [PATCH] Makefile.in: install target fix
+
+Signed-off-by: Jari Aalto <jari.aalto@cante.net>
+---
+ Makefile.in |    7 ++++++-
+ 1 files changed, 6 insertions(+), 1 deletions(-)
+
+diff --git a/Makefile.in b/Makefile.in
+index 0c164f0..3c8db28 100644
+--- a/Makefile.in
++++ b/Makefile.in
+@@ -138,12 +138,17 @@ iselect.1: iselect.pod iselect_version.c
+ #   INSTALLATION
+ # ------------------------------------------------
+ 
+-install: all
++install-old: all
+ 	$(SHTOOL) mkdir -f -p -m 755 $(bindir)
+ 	$(SHTOOL) mkdir -f -p -m 755 $(mandir)/man1
+ 	$(SHTOOL) install -c -m 755 -s iselect $(bindir)/iselect
+ 	$(SHTOOL) install -c -m 644 iselect.1 $(mandir)/man1/iselect.1
+ 
++install: all
++	install -m 755 -d $(DESTDIR)$(bindir) $(DESTDIR)$(mandir)/man1
++	install -m 755 -s iselect $(DESTDIR)$(bindir)
++	install -m 644 iselect.1 $(DESTDIR)$(mandir)/man1
++
+ # ------------------------------------------------
+ #   CLEANUP
+ # ------------------------------------------------
+-- 
+1.5.3.8
+

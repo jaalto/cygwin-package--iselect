@@ -1,0 +1,70 @@
+iselect
+------------------------------------------
+
+An interactive line selection tool for ASCII files
+
+An interactive operating via a full-screen Curses-based terminal
+session. It can be used either as an user interface frontend
+controlled by a Bourne-Shell/Perl/Tcl backend as its control script or
+in batch mode as a pipeline filter (usually between grep and the final
+executing command).
+
+Runtime requirements:
+  cygwin
+  libncurses8
+
+Build requirements:
+  cygwin
+  libncurses-devel
+
+Canonical homepage:
+  http://www.ossp.org/pkg/tool/iselect
+  http://packages.debian.org/scrollz
+
+Canonical download:
+  See above
+
+Version control repository:
+
+Mailing list:
+
+Forum / Wiki:
+
+IRC channel:
+
+Upstream contact:
+  Maintainer: Ralf S. Engelschall <rse@engelschall.com>
+  Bugs: Ralf S. Engelschall <rse@engelschall.com>
+
+License:
+  GPL
+
+Language:
+  C
+
+------------------------------------------
+
+Build instructions:
+  unpack iselect-*-src.tar.bz2
+    if you use setup to install this source package, it will be
+    unpacked under /usr/src automatically
+  cd /usr/src
+  ./iselect*.sh all
+
+------------------------------------------
+
+Files included in the binary distribution:
+  See content of *.tar.gz
+
+------------------------------------------
+
+Port Notes:
+
+----- version 1.4.0-1 -----
+- New upstream release 2008-03-13 Jari Aalto
+
+----- version 1.3.1-1 -----
+- Initial release 2008-03-13 Jari Aalto
+
+Cygwin port maintained by: Jari Aalto <jari.aalto@cante.net>
+Copyright (C) 2008 Jari Aalto; Licensed under GPL v2 or later

@@ -1,0 +1,3 @@
+tag1: iselect
+  http://www.ossp.org/pkg/tool/iselect pregexp:tar.gz file:iselect-1.4.0.tar.gz   new: x:
+  # http://cvs.ossp.org/pkg/tool/iselect/ChangeLog pregexp:orig.tar.gz file:iselect_1.3.1.orig.tar.gz new: x:

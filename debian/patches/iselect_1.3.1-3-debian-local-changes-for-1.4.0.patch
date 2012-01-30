@@ -1,0 +1,800 @@
+--- iselect-1.3.1.orig/iselect.pod
++++ iselect-1.3.1/iselect.pod
+@@ -65,9 +65,9 @@
+ iSelect is an interactive line selection tool for ASCII files, operating via a
+ full-screen Curses-based terminal session. It can be used either as an user
+ interface frontend controlled by a Bourne-Shell, Perl or other type of script
+-backend as its wrapper or in batch as a pipe filter (usually between F<grep>
++backend as its wrapper, or in batch as a pipe filter (usually between F<grep>
+ and the final executing command). In other words: iSelect was designed to be
+-used for any types of interactice line-based selections.
++used for any type of interactive line-based selection.
+ 
+ =head2 Input Data
+ 
+@@ -78,28 +78,28 @@
+ 
+ You can additionally let substrings displayed in Bold mode for non-selectable
+ lines (because the selectable lines are always displayed bold) by using the
+-construct ``C<E<lt>bE<gt>>...C<E<lt>/bE<gt>>'' as in HTML.
++construct C<E<lt>bE<gt>>...C<E<lt>/bE<gt>> as in HTML.
+ 
+ =head2 Selections
+ 
+ The selection is either just a single line (default) or multiple lines (option
+ B<-m>). Per default no lines are selectable. If a line contains the string
+-``C<E<lt>sE<gt>>'' (or a string with different delimiters configured via
++C<E<lt>sE<gt>> (or a string with different delimiters configured via
+ option B<-d>) at any position this string is stripped and the line is
+ selectable. Its result (printed to F<stdout>) is the line contents itself (but
+-without the ``C<E<lt>sE<gt>>'' string of course). If option B<-a> is used all
++without the C<E<lt>sE<gt>> string of course). If option B<-a> is used all
+ lines are selectable and their result is again the line itself, i.e. using
+-option B<-a> is the same as adding ``C<E<lt>sE<gt>>'' to every line of the
++option B<-a> is the same as adding C<E<lt>sE<gt>> to every line of the
+ input data.  When you want a specific result (i.e. not just the line contents
+-itself), you have to use the special variant ``C<E<lt>s:result textE<gt>>''
+-which results in the output ``C<result text>'' when the corresponding line is
++itself), you have to use the special variant C<E<lt>s:result textE<gt>>
++which results in the output C<result text> when the corresponding line is
+ selected.
+ 
+-When you use a specific result via ``C<E<lt>s:result textE<gt>>'' the I<result
+-text> can contain ``C<%[query text]s>'' and ``C<%[query text]S>''
++When you use a specific result via C<E<lt>s:result textE<gt>> the I<result
++text> can contain C<%[query text]s> and C<%[query text]S>
+ constructs. For every such construct an interactive query is done and the
+-result replaces the construct.  The ``C<%[query text]S>'' construct is like
+-``C<%[query text]s>'' except that the empty string as the query result is not
++result replaces the construct.  The C<%[query text]S> construct is like
++C<%[query text]s> except that the empty string as the query result is not
+ accepted on input.
+ 
+ The Curses-based full-screen selection is always done via F</dev/tty>, because
+@@ -108,9 +108,9 @@
+ 
+ =head2 Output Data
+ 
+-The output is the line itself or the string given with ``C<E<lt>s:result
+-textE<gt>>''.  When multiple line selection mode (option B<-m>) is used the
+-output is all selected lines theirself or their configured result strings.
++The output is the line itself or the string given with C<E<lt>s:result textE<gt>>.
++When multiple line selection mode (option B<-m>) is used the
++output is all selected lines, or their configured result strings.
+ Output always is written to F<stdout>.
+ 
+ =head1 OPTIONS
+@@ -123,9 +123,8 @@
+ 
+ =item B<-d> I<STR>, B<--delimiter=>I<STR>
+ 
+-Sets the delimiters for the selection tags. The default is `C<E<lt>,E<gt>>',
+-i.e. the selection tags have to read ``C<E<lt>sE<gt>>'' and ``C<E<lt>s:result
+-textE<gt>>''
++Sets the delimiters for the selection tags. The default is C<E<lt>,E<gt>>,
++i.e. the selection tags have to read C<E<lt>sE<gt>> and C<E<lt>s:result textE<gt>>.
+ 
+ =item B<-c>, B<--strip-comments>
+ 
+@@ -157,7 +156,7 @@
+ =item B<-k> I<KEY>[:I<OKEY>], B<--key=>I<KEY[:I<OKEY>]>
+ 
+ Defines an additional input key. Per default I<OKEY> is C<RETURN>, i.e.  for
+-instance B<-kf> defines another selection key `C<f>'.
++instance B<-kf> defines another selection key C<f>.
+ 
+ =item B<-m>, B<--multi-line>
+ 
+@@ -189,14 +188,13 @@
+ Prefix the result string (given on F<stdout>) with the corresponding selection
+ key which was used. This usually is C<RETURN> or C<KEY_RIGHT> but can be any
+ of the additional keys defined by option B<-k>.  When you use B<-kf> and
+-select a line C<Foo Bar> with key `C<f>' the result string is ``C<f:Foo
+-Bar>''.
++select a line C<Foo Bar> with key C<f> the result string is C<f:Foo Bar>.
+ 
+ =item B<-P>, B<--position-result>
+ 
+ Prefix the result string (given on F<stdout>) with the corresponding cursor
+ position followed by a colon. When you selected line I<N> and this line has
+-the result C<Foo Bar> configured the result string is ``C<N:Foo Bar>''.
++the result C<Foo Bar> configured the result string is C<N:Foo Bar>.
+ 
+ =item B<-Q> I<STR>, B<--quit-result=>I<STR>
+ 
+@@ -235,6 +233,10 @@
+   RETURN ........ Select line and exit
+   CURSOR-RIGHT .. Select line and exit
+   SPACE ......... Select line and stay (multi-line mode only)
++  C ............. Clear current marks (multi-line mode only)
++
++Note: the C<C> keystroke is a Debian extension to iSelect 1.2.0, which
++has been reported to Ralf S. Engelschall.
+ 
+ =head2 Others
+ 
+@@ -250,7 +252,7 @@
+ 
+ As an example we present a real-life situation where iSelect can enhance an
+ existing functionality. We define two Bash functions (for your
+-F<$HOME/.bashrc> file) which enhance the built-in `F<cd>' command of the
++F<$HOME/.bashrc> file) which enhance the built-in F<cd> command of the
+ shell.
+ 
+  #   database scan for enhanced cd command
+@@ -273,17 +275,17 @@
+      PS1="\u@\h:$PWD\n:> "
+  }
+ 
+-This new `F<cd>' command is compatible with Bashs built-in variant for the case
++This new F<cd> command is compatible with Bashs built-in variant for the case
+ where the specified directory actually exists. When it doesn't, the original
+-`F<cd>' would immediately give an error (assuming we have no F<CDPATH>
++F<cd> would immediately give an error (assuming we have no F<CDPATH>
+ variable defined).  Here this enhanced version tries harder. First it searches
+ for such a directory in a previously built (via F<cds>) F<$HOME/.cdpaths>
+ files. When no line was found, iSelect just returns the given directory as the
+-default result and `F<cd>' then fails as usual with an error message. When
++default result and F<cd> then fails as usual with an error message. When
+ only one directory was found, iSelect directly results this particular line to
+-`F<cd>'. And only when more then one directory was found, iSelect opens its
++F<cd>. And only when more then one directory was found, iSelect opens its
+ Curses-based selection screen and lets the user choose interactively between
+-those directories. The chosen directory is then finally given to `F<cd>'.
++those directories. The chosen directory is then finally given to F<cd>.
+ 
+ For more useful examples on how to use iSelect, see the F<contrib/> directory
+ of the iSelect distribution tarball.
+--- iselect-1.3.1.orig/iselect_help.txt
++++ iselect-1.3.1/iselect_help.txt
+@@ -18,6 +18,7 @@
+       <b>RETURN</b> ........ Select line and exit
+       <b>CURSOR-RIGHT</b> .. Select line and exit
+       <b>SPACE</b> ......... Select line and stay (multi-line mode only)
++      <b>C</b> ............. Clear current marks (multi-line mode only)
+ 
+   Others:
+       <b>q</b> ............. Quit (exit without selection)
+--- iselect-1.3.1.orig/iselect_browse.c
++++ iselect-1.3.1/iselect_browse.c
+@@ -36,7 +36,7 @@
+ #include <signal.h>
+ #include <string.h>
+ #ifdef USE_NCURSES
+-#include <ncurses/ncurses.h>
++#include <ncurses.h>
+ #endif
+ #ifdef USE_SLCURSES
+ #include <slcurses.h>
+@@ -55,6 +55,9 @@
+ void strip(char *string);
+ void diehard(void);
+ void diesoft(void);
++void diealloc(void);
++void *smalloc(size_t size);
++void *srealloc(void *ptr, size_t size);
+ void setup(void);
+ char *iSelect_InputField(int wYSize, int wXSize, int wYPos, int wXPos, int bAllowEmpty);
+ void iSelect_Draw(WINDOW *wField,
+@@ -78,7 +81,7 @@
+ /*
+  *  GLOBALS
+  */
+-struct Line *spaLines[MAXLINES];  /* filled by iSelect() */
++struct Line **spaLines;  /* filled by iSelect() */
+ int          nLines;
+ 
+ 
+@@ -132,6 +135,29 @@
+     endwin();                      /* make terminal the way it was */
+ }
+ 
++void diealloc(void)
++{
++    fprintf(stderr, "Memory allocation error... aborting\n");
++    diesoft();
++    exit(EX_OSERR);
++}
++
++void *smalloc(size_t size)
++{
++    char *ptr = (char *) malloc(size);
++    if (NULL == ptr)
++        diealloc();
++    return (void *)ptr;
++}
++
++void *srealloc(void *ptr, size_t size)
++{
++    ptr = (void *) realloc(ptr, size);
++    if (NULL == ptr)
++        diealloc();
++    return (void *)ptr;
++}
++
+ /*  
+  *  Startup with trapping of interrupt signal
+  */
+@@ -154,11 +180,13 @@
+     int nBufCurPos;
+     int nScrCurPos;
+     int bEOI;
+-    char caBuf[1024];
+     char *cpBuf;
++    int cpBufLen;
+     int i;
+ 
+-    cpBuf = caBuf;
++    cpBufLen = 1024;
++    cpBuf = (char *) smalloc(cpBufLen+1);
++    cpBuf[0] = NUL;
+ 
+     wField = newwin(wYSize, wXSize, wYPos, wXPos);
+     keypad(wField, TRUE);
+@@ -188,7 +216,7 @@
+                     bEOI = TRUE;
+                 }
+                 else if (c == 0x1b) { /* ESCAPE */
+-                    strcpy(caBuf, "ESC");
++                    strcpy(cpBuf, "ESC");
+                     bEOI = TRUE;
+                 }
+                 else if (c == 0x04) { /* DELETE */
+@@ -231,6 +259,10 @@
+                     }
+                     nScrCurPos--; /* neutralize following increment */
+                 }
++                if (nBufEnd >= cpBufLen) {
++                    cpBufLen += 1024;
++                    cpBuf = (char *) srealloc((void *)cpBuf, cpBufLen+1);
++                }
+                 cpBuf[nBufEnd++] = c;
+                 nBufCurPos++;
+                 nScrCurPos++;
+@@ -243,7 +275,7 @@
+     fflush(stdin);
+     delwin(wField);
+ 
+-    return strdup(caBuf);
++    return cpBuf;
+ }
+ 
+ /*
+@@ -260,17 +292,21 @@
+ {
+     int i, j, k, mode;
+     int percent;
++    /*  Buffer containing "%4d,%3d%%"  */
+     char ca[80];
+-    char boldbegin[1024];
++    char *boldbegin;
+     int nboldbegin;
+-    char boldend[1024];
++    char *boldend;
+     int nboldend;
+ 
+     /*
+      *  create actual bold tags
+      */
++    boldbegin = (char *) smalloc(strlen(tagbegin)+strlen(tagend)+2);
+     sprintf(boldbegin, "%sb%s", tagbegin, tagend);
+     nboldbegin = strlen(boldbegin);
++
++    boldend = (char *) smalloc(strlen(tagbegin)+strlen(tagend)+3);
+     sprintf(boldend, "%s/b%s", tagbegin, tagend);
+     nboldend = strlen(boldend);
+ 
+@@ -294,7 +330,7 @@
+             waddstr(wField, "*");
+         else
+             waddstr(wField, " "); /* cursor pos == first blank */
+-        for (j = k = 0; spaLines[nAbsFirstLine+nRelFirstDraw+i]->cpLine[j] != NUL && j <= (wXSize-1)-2;) {
++        for (j = k = 0; spaLines[nAbsFirstLine+nRelFirstDraw+i]->cpLine[j] != NUL && k <= (wXSize-1)-2;) {
+             if (strniEQ(&spaLines[nAbsFirstLine+nRelFirstDraw+i]->cpLine[j], boldbegin, nboldbegin)) {
+                 mode = mode | A_BOLD;
+                 wattrset(wField, mode);
+@@ -316,6 +352,8 @@
+         wattrset(wField, A_NORMAL);
+     }
+     wmove(wField, nRelMarked, (wXSize-1)-1);
++    free(boldbegin);
++    free(boldend);
+ 
+     /* 
+      *  draw status bar 
+@@ -331,9 +369,10 @@
+     waddstr(sField, name);
+ 
+     wmove(sField, 0, COLS-10);
+-    percent = (int)(((nAbsFirstLine+nRelMarked)*100)/nLines);
+-    if (1+nAbsFirstLine+nRelMarked == nLines)
++    if ((1+nAbsFirstLine+nRelMarked == nLines) || nLines == 0)
+         percent = 100;
++    else
++        percent = (int)(((nAbsFirstLine+nRelMarked)*100)/nLines);
+     sprintf(ca, "%4d,%3d%%", 1+nAbsFirstLine+nRelMarked, percent);
+     waddstr(sField, ca);
+ 
+@@ -377,13 +416,17 @@
+     int bQuit = FALSE;
+     int y;
+     int x;
+-    char msg[1024];
+-    char ca[1024];
+-    char ca3[1024];
++    int voffset;
++    /*  Static messages */
++    char msg[128];
++    int caLen;
++    char *ca;
++    char *ca3;
+     char *cp;
+     char *cp2;
+     char *cp3;
+     char **cpp;
++    int cppsize;
+     int ok;
+     int bAllowEmpty;
+ 
+@@ -602,14 +645,18 @@
+                     /* additionally ask for query strings */
+                     if (bEOI == TRUE) {
+                         cp = spaLines[nAbsFirstLine+nRelMarked]->cpResult;
++                        caLen = 1024;
++                        ca = (char *) smalloc(caLen+1);
+                         cp2 = ca;
+                         while (bEOI == TRUE && *cp != NUL) {
+                             if (strnEQ(cp, "%[", 2)) {
+                                 cp += 2;
+                                 for (cp3 = cp; !strniEQ(cp3, "]s", 2); cp3++)
+                                     ;
++                                ca3 = (char *) smalloc(cp3-cp+3);
+                                 strncpy(ca3, cp, cp3-cp);
+                                 ca3[cp3-cp] = NUL;
++                                strcat(ca3, ": ");
+                                 cp = cp3+1;
+                                 if (*cp == 's')
+                                     bAllowEmpty = TRUE;
+@@ -617,10 +664,10 @@
+                                     bAllowEmpty = FALSE;
+                                 cp++;
+     
+-                                sprintf(msg, "%s: ", ca3);
+-                                iSelect_Draw(wField, wYSize, wXSize, wYPos, wXPos, nAbsFirstLine, nAbsLastLine, -1, nRelFirstDraw, nRelLastDraw, nLines, sField, title, name, mField, msg, tagbegin, tagend);
++                                iSelect_Draw(wField, wYSize, wXSize, wYPos, wXPos, nAbsFirstLine, nAbsLastLine, -1, nRelFirstDraw, nRelLastDraw, nLines, sField, title, name, mField, ca3, tagbegin, tagend);
+                                 wrefresh(wField);
+-                                cp3 = iSelect_InputField(mYSize, mXSize-strlen(msg), mYPos, mXPos+strlen(msg), bAllowEmpty);
++                                cp3 = iSelect_InputField(mYSize, mXSize-strlen(ca3), mYPos, mXPos+strlen(ca3), bAllowEmpty);
++                                free(ca3);
+                                 if (strEQ(cp3, "ESC")) {
+                                     bEOI = FALSE;
+                                     spaLines[nAbsFirstLine+nRelMarked]->fSelected = FALSE;
+@@ -628,6 +675,12 @@
+                                     continue;
+                                 }
+                                 strcpy(msg, "");
++                                if (cp2-ca+strlen(cp3) >= caLen) {
++                                    caLen += strlen(cp3);
++                                    i = cp2-ca;
++                                    ca = (char *) srealloc(ca, caLen+1);
++                                    cp2 = ca + i;
++                                }
+                                 strcpy(cp2, cp3);
+                                 cp2 += strlen(cp3);
+                             }
+@@ -640,6 +693,7 @@
+                             if (strNE(spaLines[nAbsFirstLine+nRelMarked]->cpResult, ca))
+                                 spaLines[nAbsFirstLine+nRelMarked]->cpResult = strdup(ca);
+                         }
++                        free(ca);
+                     }
+                 }
+             }
+@@ -663,6 +717,15 @@
+                             strcpy(msg, "No multi-line selection allowed.");
+                      }
+                  }
++                 else if (c == 'C') {
++                     if (multiselect) {
++                         for (i = nFirstLine; i < nLastLine; i++)
++                             spaLines[i]->fSelected = FALSE;
++                     }
++                     else {
++                            strcpy(msg, "No multi-line selection.");
++                     }
++                 }
+                  else if (c == 'q') {
+                      bEOI = TRUE;
+                      bQuit = TRUE;
+@@ -718,14 +781,22 @@
+                      wrefresh(wField);
+ 
+                      hField = newwin(wYSize, wXSize, wYPos, wXPos);
+-                     werase(hField);
+                      if (c == 'h') 
+                          cpp = iSelect_Help;
+                      else
+                          cpp = iSelect_README;
+-                     for (y = 0; y < wYSize && cpp[y] != NULL; y++) {
+-                         sprintf(ca, cpp[y]);
+-                         cp = ca;
++                     voffset = 0;
++                     while (1) {
++                         for (cppsize = 0; cpp[cppsize] != NULL; cppsize++)
++                             ;
++                         if (voffset > cppsize - wYSize)
++                             voffset = cppsize - wYSize;
++                         if (voffset < 0)
++                             voffset = 0;
++                         werase(hField);
++                     for (y = 0; y < wYSize && cpp[y+voffset] != NULL; y++) {
++                         cp3 = strdup(cpp[y+voffset]);
++                         cp = cp3;
+                          x = 0;
+                          while (1) {
+                              if ((cp2 = strstr(cp, "<b>")) != NULL) {
+@@ -744,13 +815,28 @@
+                                  break;
+                              }
+                         }
++                         free(cp3);
+                      }
+-                     wrefresh(hField);
+-                     while (1) {
++                         wrefresh(hField);
+                          c = wgetch(wField);
+-                         c = c & 0xff; /* strip down to 8bit */
+                          if (c == 'q')
+                              break;
++                         else if (c == KEY_UP)
++                             --voffset;
++                         else if (c == KEY_DOWN)
++                             ++voffset;
++                         else if (c == KEY_PPAGE)
++                             voffset -= wYSize;
++                         else if (c == KEY_NPAGE)
++                             voffset += wYSize;
++                         else if (c == 'g')
++                             voffset = 0;
++                         else if (c == 'G')
++                             voffset = cppsize - wYSize;
++                         else if (c == 'h')
++                             cpp = iSelect_Help;
++                         else if (c == 'v')
++                             cpp = iSelect_README;
+                      }
+                      delwin(hField);
+ 
+@@ -794,8 +880,7 @@
+ {
+     WINDOW *wMain;
+     int i, j, k;
+-    char ca[MAXLINELEN], ca2[MAXLINELEN];
+-    char ca3[MAXLINELEN];
++    char *ca, *ca2, *ca3;
+     char *cp, *cps, *cpe;
+     struct Line *spLine;
+     int rc;
+@@ -806,6 +891,16 @@
+      *  spaLines array of browsable strings
+      */
+     j = 0;
++    /*
++     * count lines
++     */
++    nLines = 1;
++    for (i = 0; caBuf[i] != NUL; i++)
++        if (caBuf[i] == NL)
++            nLines++;
++    spaLines = (struct Line **) smalloc(sizeof(struct Line *) * nLines);
++    ca = (char *) smalloc(strlen(caBuf)+1);
++
+     nLines = 0;
+     for (i = 0; caBuf[i] != NUL; i++) {
+         if (caBuf[i] != NL) {
+@@ -823,8 +918,10 @@
+                     continue;
+             }
+ 
+-            spLine = (struct Line *)malloc(sizeof(struct Line));
++            spLine = (struct Line *)smalloc(sizeof(struct Line));
+ 
++            ca2 = (char *) smalloc(strlen(ca)+strlen(tagbegin)+2);
++            ca3 = (char *) smalloc(strlen(ca)+strlen(tagbegin)+2);
+             sprintf(ca2, "%ss", tagbegin);
+             sprintf(ca3, "%sS", tagbegin);
+             if (   (cp = strstr(ca, ca2)) != NULL
+@@ -870,8 +967,11 @@
+             if (stripws)
+                 strip(spLine->cpResult);
+             spaLines[nLines++] = spLine;
++            free(ca2);
++            free(ca3);
+         }
+     }
++    free(ca);
+ #ifdef DEBUG
+     for (i = 0; i < nLines; i++) {
+         printf("spaLines[%d] = {\n", i);
+--- iselect-1.3.1.orig/iselect_browse.h
++++ iselect-1.3.1/iselect_browse.h
+@@ -38,11 +38,7 @@
+     char *cpResult;    /* the result string */
+ } Line;
+ 
+-#define MAXLINELEN 1024
+-#define MAXLINES   1024
+-#define MAXBUF     MAXLINELEN*MAXLINES
+-
+-extern struct Line *spaLines[MAXLINES];
++extern struct Line **spaLines;
+ extern int          nLines;
+ 
+ /*
+--- iselect-1.3.1.orig/iselect_help.c
++++ iselect-1.3.1/iselect_help.c
+@@ -23,6 +23,7 @@
+ "      <b>RETURN</b> ........ Select line and exit",
+ "      <b>CURSOR-RIGHT</b> .. Select line and exit",
+ "      <b>SPACE</b> ......... Select line and stay (multi-line mode only)",
++"      <b>C</b> ............. Clear current marks (multi-line mode only)",
+ "",
+ "  Others:",
+ "      <b>q</b> ............. Quit (exit without selection)",
+--- iselect-1.3.1.orig/example/mtin/mtin
++++ iselect-1.3.1/example/mtin/mtin
+@@ -1,4 +1,4 @@
+-#!/sw/bin/perl
++#!/usr/bin/perl
+ ##
+ ##  MetaTIN -- a TIN frontend for better USENET NetNews reading
+ ##  Copyright (c) 1996-1997 Ralf S. Engelschall, All Rights Reserved. 
+--- iselect-1.3.1.orig/example/scvs/scvs
++++ iselect-1.3.1/example/scvs/scvs
+@@ -1,4 +1,4 @@
+-#!/sw/bin/perl
++#!/usr/bin/perl
+ ##
+ ##  sCVS -- Switch CVS Repository
+ ##  Copyright (c) 1997 Ralf S. Engelschall, All Rights Reserved. 
+@@ -6,8 +6,8 @@
+ 
+ require 5.004;
+ 
+-use Term::Cap;
+-use File::PathConvert;
++use Term::ANSIColor;
++use File::Spec;
+ use IO::File 1.06;
+ use Cwd;
+ 
+@@ -16,34 +16,12 @@
+ ##  1. Determine terminal capabilities
+ ##
+ 
+-$term = Tgetent Term::Cap { TERM => undef, OSPEED => 9600 };
+-$bold = $term->Tputs('md', 1, undef);
+-$norm = $term->Tputs('me', 1, undef);
+-
+-
+ ##   
+ ##   2. Find .scvsrc files and read contents into %CVSROOTS hash
+ ##
+ 
+ %CVSROOTS = ();
+ 
+-#   determine canonical path
+-sub canonical_path {
+-    my ($path) = @_;
+-    my ($pathL);
+-
+-    $pathL = '';
+-    while ($path ne $pathL) {
+-        $pathL = $path;
+-        $path =~ s|//|/|g;
+-        $path =~ s|/\./|/|g;
+-        $path =~ s|/\.$|/|g;
+-        $path =~ s|^./||g;
+-        $path =~ s|([^/.][^/.]*)/\.\.||;
+-    }
+-    return $path;
+-}
+-
+ #   create list of dirs back to root
+ ($cwd = Cwd::cwd) =~ s|/$||;
+ $cwdT = $cwd;
+@@ -55,9 +33,10 @@
+ #   search for .scvsrc files
+ foreach $dir (reverse(@DIR)) {
+     if (-f "$dir/.scvsrc") {
+-        $reldir = &canonical_path(File::PathConvert::abs2rel($dir));
+-        $subdir = &canonical_path(File::PathConvert::abs2rel($cwd, $dir));
+-        $rcfile = &canonical_path("$reldir/.scvsrc");
++        $reldir = File::Spec->abs2rel($dir);
++        $reldir = '.' if $reldir eq '';
++        $subdir = File::Spec->abs2rel($cwd, $dir);
++        $rcfile = "$reldir/.scvsrc";
+         &process_rcfile($rcfile, $cwd, $reldir, $subdir);
+     }
+ }
+@@ -103,7 +82,6 @@
+ $locC =~ s|\n$||;
+ $root->close();
+ 
+-
+ ##
+ ##  4. Create iSelect page with list of available CVS repositories
+ ##     and fire up iSelect with it
+@@ -158,14 +136,14 @@
+ $prefixN = $locN;
+ $prefixN =~ s|^[^/]+||;
+ 
+-foreach $dir (split(/\n/, `find . -name CVS -type d -depth -print`)) {
++foreach $dir (split(/\n/, `find . -noleaf -depth -type d -name CVS -print `)) {
+     $dir =~ s|^\./||;
+     $dirname = $dir;
+     if (length($dirname) > 60) {
+         $dirname = '..'.substr($dirname, length($dirname)-60, 60);
+     }
+     $dirname = sprintf("%-60s", $dirname);
+-    print STDERR "Processing: ${bold}$dirname$norm\r";
++    print STDERR "Processing: ".colored("$dirname\r", 'bold');
+ 
+     open(FP, "<$dir/Root");
+     $locO = <FP>;
+--- iselect-1.3.1.orig/example/melm/melm
++++ iselect-1.3.1/example/melm/melm
+@@ -1,4 +1,4 @@
+-#!/sw/bin/perl
++#!/usr/bin/perl
+ ##
+ ##  MetaELM -- ELM frontend
+ ##  Copyright (c) 1997 Ralf S. Engelschall, All Rights Reserved. 
+--- iselect-1.3.1.orig/example/ilogin/ilogin
++++ iselect-1.3.1/example/ilogin/ilogin
+@@ -1,4 +1,4 @@
+-#!/sw/bin/perl
++#!/usr/bin/perl
+ ##
+ ##  iLogin -- interactive login
+ ##  Copyright (c) 1997 Ralf S. Engelschall, All Rights Reserved. 
+--- iselect-1.3.1.orig/example/gotourl/dot.gotourlrc
++++ iselect-1.3.1/example/gotourl/dot.gotourlrc
+@@ -4,8 +4,8 @@
+ 
+ ^ftp://.+/$           cftp %U
+ ^ftp://.+[^/]$        lftp %U
+-^(http|ftp)://.+      /usr/local/bin/lynx %U
+-^(http|ftp)://.+      /usr/local/bin/netscape -remote 'openURL(%U)'
++^(http|ftp)://.+      lynx %U
++^(http|ftp)://.+      netscape -remote 'openURL(%U)'
+ ^(http|ftp)://.+[^/]$ fetch %U
+ 
+ ##EOF##
+--- iselect-1.3.1.orig/example/gotourl/gotourl
++++ iselect-1.3.1/example/gotourl/gotourl
+@@ -1,4 +1,4 @@
+-#!/sw/bin/perl
++#!/usr/bin/perl
+ ##
+ ##  GotoURL -- go to a particular URL
+ ##  Copyright (c) 1997 Ralf S. Engelschall, All Rights Reserved. 
+--- iselect-1.3.1.orig/iselect_keys.c
++++ iselect-1.3.1/iselect_keys.c
+@@ -36,7 +36,7 @@
+ #include <signal.h>
+ #include <string.h>
+ #ifdef USE_NCURSES
+-#include <ncurses/ncurses.h>
++#include <ncurses.h>
+ #endif
+ #ifdef USE_SLCURSES
+ #include <slcurses.h>
+--- iselect-1.3.1.orig/iselect_main.c
++++ iselect-1.3.1/iselect_main.c
+@@ -90,6 +90,7 @@
+ }
+ 
+ struct option options[] = {
++    { "delimiter",       TRUE,  NULL, 'd'  },
+     { "strip-comments",  FALSE, NULL, 'c'  },
+     { "force-browse",    FALSE, NULL, 'f'  },
+     { "all-select",      FALSE, NULL, 'a'  },
+@@ -108,8 +109,6 @@
+     { NULL,              FALSE, NULL, '\0' },
+ };
+ 
+-char caBuf[MAXBUF];
+-
+ int main(int argc, char **argv)
+ {
+     int fpStdout;
+@@ -119,7 +118,8 @@
+     int pos = -1;
+     char *progname;
+     int nBuf, p;
+-    char ca[1024];
++    /*  This buffer is used to store the string representation of an int */
++    char ca[22];
+     char *title = "";
+     char *name = "iSelect";
+     int stripco = FALSE;
+@@ -135,6 +135,8 @@
+     char *abortstr = NULL;
+ 	char *tagbegin = "<";
+ 	char *tagend   = ">";
++    char *caBuf;
++    int caBufLen;
+ 
+     /*
+      *  argument handling
+@@ -223,20 +225,31 @@
+      *  read input
+      */
+ 
++    nBuf = 0;
++    caBufLen = 1024;
++    caBuf = (char *) malloc(caBufLen+1);
++    caBuf[0] = NUL;
+     if (optind < argc) {
+         /* browsing text is given as arguments */
+-        nBuf = 0;
+         for (; optind < argc; ++optind) {
+             cp = (argv[optind] == NULL ? "" : argv[optind]);
+-            sprintf(caBuf+nBuf, "%s\n", cp);
+-            nBuf += strlen(cp)+1;
++            if (nBuf+strlen(cp)+1 >= caBufLen) {
++                caBufLen += strlen(cp)+1;
++                caBuf = (char *) realloc((void *)caBuf, caBufLen+1);
++            }
++            strcpy(caBuf+nBuf, cp);
++            nBuf += strlen(cp);
++            caBuf[nBuf++] = NL;
+         }
+         caBuf[nBuf++] = NUL;
+     }
+     else if (optind == argc && !feof(stdin)) {
+         /* browsing text is given on stdin */
+-        nBuf = 0;
+         while ((c = fgetc(stdin)) != (char)(EOF)) {
++            if (nBuf >= caBufLen) {
++                caBufLen += 1024;
++                caBuf = (char *) realloc((void *)caBuf, caBufLen+1);
++            }
+             caBuf[nBuf++] = c;
+         }
+         caBuf[nBuf++] = NUL;
+@@ -273,16 +286,16 @@
+         for (i = 0; i < nLines; i++) {
+             if (spaLines[i]->fSelected) {
+                 if (resultline) {
+-                    sprintf(ca, "%d:", i+1);
++                    sprintf(ca, "%d", i+1);
+                     write(fpStdout, ca, strlen(ca));
++                    write(fpStdout, ":", 1);
+                 }
+                 if (keyresultline) {
+-                    sprintf(ca, "%s:", keystr);
+-                    write(fpStdout, ca, strlen(ca));
++                    write(fpStdout, keystr, strlen(keystr));
++                    write(fpStdout, ":", 1);
+                 }
+                 write(fpStdout, spaLines[i]->cpResult, strlen(spaLines[i]->cpResult));
+-                sprintf(ca, "\n");
+-                write(fpStdout, ca, strlen(ca));
++                write(fpStdout, "\n", 1);
+             }
+         }
+     }
+--- iselect-1.3.1.orig/Makefile.in
++++ iselect-1.3.1/Makefile.in
+@@ -21,7 +21,8 @@
+ prefix          = @prefix@
+ exec_prefix     = @exec_prefix@
+ bindir          = @bindir@
+-mandir          = ${exec_prefix}/man
++mandir          = @mandir@
++# ${exec_prefix}/man
+ 
+ # ------------------------------------------------
+ #   THE DEFAULT TARGETS
