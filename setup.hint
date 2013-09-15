@@ -5,4 +5,4 @@ controlled by a Bourne-Shell/Perl/Tcl backend as its control script or
 in batch mode as a pipeline filter (usually between grep and the final
 executing command)."
 category: Utils
-requires: cygwin libncurses8
+requires: libncursesw10
