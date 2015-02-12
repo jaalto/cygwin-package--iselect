@@ -1,5 +1,5 @@
 To: cygwin-announce@cygwin.com
-Subject: Updated: iselect 1.4.0-2 -- An interactive line selection tool for ASCII files
+Subject: Updated: iselect 1.4.0-3 -- An interactive line selection tool for ASCII files
 
 PACKAGE DESCRIPTION
 ===================
@@ -16,7 +16,7 @@ executing command).
 CHANGES SINCE LAST RELEASE
 ==========================
 
-Link with libncursesw10
+Cygwin: compiled with libncursesw10
 See http://cvs.ossp.org/pkg/tool/iselect/ChangeLog
 
 INSTALL OR UPGRADE NOTES
